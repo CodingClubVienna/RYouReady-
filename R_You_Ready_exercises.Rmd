@@ -31,6 +31,8 @@ Useful resources
 Google, stackoverflow and ChatGPT etc
 https://www.datacamp.com/cheat-sheet/tidyverse-cheat-sheet-for-beginners
 https://r4ds.had.co.nz/
+https://www.r-bloggers.com/2020/06/penguins-dataset-overview-iris-alternative-in-r/
+
 
 ```{r}
 # you can use alos use help to look up commands 
