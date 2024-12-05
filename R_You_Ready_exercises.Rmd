@@ -37,6 +37,14 @@ https://r4ds.had.co.nz/
 help(plot)
 help(select)
 ```
+R basic command tips
+```{r}
+# using variables
+var1 = "simple assignment"
+var2 <- "left assignment"
+print(var1)
+print(var2)
+```
 
 
 **Step 1 - importing and exploring your data**
