@@ -1,0 +1,182 @@
+---
+title: "R You Ready exercises"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-12-05"
+---
+Welcome to the R You Ready workshop.
+Today we will be working with the Palmer penguins dataset to produce an RMarkdown file!
+For this task some of the commands have been included to help you as hints.
+*Please feel free to add your own notes as we go along through the exercise.*
+
+First of all lets load the package we need. Note that install.packages just needs to be completed once.
+```{r, include=FALSE}
+# package names should be in ' or "
+#install.packages('tidyverse') # data wranging, plotting packages 
+#install.packages('rmarkdown', dep = TRUE) # RMarkdown report package
+#tinytex::install_tinytex() # pdf output package
+#install.packages('palmerpenguins') # dataset package
+#install.packages('ggfortify') # data visualisation tool
+#install.packages('factoextra') # visualise results of multivariate analyses
+library(tidyverse)
+library(rmarkdown)
+library(palmerpenguins)
+library(ggfortify)
+library(factoextra)
+```
+
+
+Useful resources
+Google, stackoverflow and ChatGPT etc
+https://www.datacamp.com/cheat-sheet/tidyverse-cheat-sheet-for-beginners
+https://r4ds.had.co.nz/
+
+```{r}
+# you can use alos use help to look up commands 
+help(plot)
+help(select)
+```
+
+
+**Step 1 - importing and exploring your data**
+```{r}
+penguins_raw <- palmerpenguins::penguins_raw
+penguins <- palmerpenguins::penguins
+# we have used the <- to assign names to the datasets
+```
+
+Now we have imported our datasets lets have a look at them.
+```{r}
+# the pipe operator in the tidyverse is used to apply the command to the dataframe to the left of the operator. You can add pipe operators one after another if needed!
+penguins %>% head() 
+head(penguins)
+penguins_raw %>% head()
+glimpse(penguins)
+glimpse(penguins_raw)
+```
+What is the differences between the penguins and penguins raw datasets?
+What information has been excluded/included?
+
+**Step 2 - basic statistics data cleaning**
+To get some basic statistics we can use
+```{r}
+penguins %>% summary()
+penguins %>% count(species)
+```
+How many NA values do we have in each column?
+Which species has the most individuals in the dataset?
+
+We now want to tidy up our dataset
+```{r}
+# remove nas as it is difficult for calculating statistics sometimes and rename our new dataframe
+penguins_clean <- penguins %>% na.omit()
+# to rename the island column to the word home 
+penguins_clean %>% rename(home = island) 
+# to get the body mass in kg and add as a column
+penguins_clean %>% select(body_mass_g) %>% mutate(body_mass_kg=body_mass_g*0.001)
+```
+
+How would you add flipper_length in cms as another column?
+```{r}
+
+```
+
+How would you select just one species of penguin and assign it as a dataframe?
+The code below is incomplete
+```{r}
+penguins_clean %>% filter(species=="Adelie")
+```
+Another useful command for data wrangling is below. What does it do?
+```{r}
+#pivot_wider()
+```
+
+**Step 3 - data visualisation - lets create some graphs!**
+We will use the ggplot2 package which is part of the tidyverse package.
+For plotting inspiration see -  https://r-graph-gallery.com/ggplot2-package.html
+
+To create a scatter plot 
+```{r}
+ggplot(data=penguins_clean, aes(x = body_mass_g, y = flipper_length_mm)) + 
+  geom_point(aes(color = species, shape = sex)) +
+  labs(title = "Palmer penguin measurements", x = "Body mass (g)", 
+       y = "Flipper length (mm)")
+
+# to add trendlines we use 
+ggplot(data=penguins_clean, aes(x = body_mass_g, y = flipper_length_mm)) + 
+  geom_point(aes(color = species, shape = sex)) +
+  labs(title = "Palmer penguin measurements", x = "Body mass (g)", 
+       y = "Flipper length (mm)") +
+  geom_smooth(aes(group = species, colour = species), method = lm, se = T) 
+```
+
+What does geom_point and geom_smooth do?
+
+Generating bar plots
+```{r}
+ggplot(penguins_clean, aes(x=species)) + geom_bar(aes(color=island)) 
+```
+Which species of penguin live on which island?
+
+Produce a barplot where the x axis is the island and the colour is the sex
+```{r}
+
+```
+What can we say about the distribution of sex across the different islands?
+
+Histogram 
+```{r}
+ggplot(penguins_clean, aes(x = flipper_length_mm, color = sex)) + geom_histogram(fill = "white")
+```
+
+Create a boxplot 
+```{r}
+
+```
+
+Create a faceted plot (scatter plot, bar plot) facetting the data by the penguin species
+```{r}
+
+```
+
+**Step 4 - perform a principal component analysis (dimensionality reduction technique)**
+There are a couple of different ways to do this, see -  https://www.geeksforgeeks.org/how-to-make-pca-plot-with-r/
+r has some inbuilt functions for this prcomp or princomp
+
+```{r}
+penguins_table <- drop_na(penguins)
+penguins_pca <- prcomp(penguins_table[,c(3:6)], scale = TRUE)
+summary(penguins_pca)
+```
+What does this information tell you?
+
+Create a scree plot
+```{r}
+fviz_eig(penguins_pca, addlabels = TRUE)
+```
+What does the scree plot tell you
+
+Visualise the pca plot
+```{r}
+penguins_pca_plot <- autoplot(penguins_pca, data = penguins_table, colour = 'species', shape = 'sex')
+
+```
+What happens if you exchange species for island?
+What do the plots tell you?
+
+Visualise on a biplot
+```{r}
+biplot_penguins_pca <- biplot(penguins_pca)
+```
+What do the arrows show on the plot?
+
+**Step 5 - perform a t-test to answer the question do male penguins have longer flippers?**
+Start by comparing the means between the two groups. Enter the code below
+```{r}
+
+```
+
+Extension tasks 
+* create an interactive plot
+* generate a sampling map to see where we sampled the penguins from
